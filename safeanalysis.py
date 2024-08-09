@@ -72,6 +72,24 @@ st.title("Construction Safety Factors and Accident Risks Analysis")
 # Sidebar for node selection
 node_selection = st.sidebar.selectbox("Select a node to simulate removal:", options=list(G.nodes()))
 
+# Define color map for different types
+color_map = {
+    'ProjectScale': '#66c2a5',
+    'AccidentType': '#fc8d62',
+    'MajorCause': '#8da0cb',
+    'MediumCause': '#e78ac3',
+    'MinorCause': '#a6d854',
+    'IndustryType': '#ffd92f',
+    'OccupationType': '#e5c494',
+    'Age': '#b3b3b3',
+    'Gender': '#1f78b4',
+    'Experience': '#33a02c',
+    'Weekday': '#6a3d9a',
+    'Time': '#b15928',
+    'Facility': '#ff7f00',
+    'WorkerCount': '#cab2d6'
+}
+
 # Centrality measures
 st.sidebar.header("Centrality Measures")
 degree_centrality = nx.degree_centrality(G)
