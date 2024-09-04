@@ -6,65 +6,72 @@ from matplotlib.lines import Line2D
 from networkx.algorithms.community import girvan_newman
 
 # Load the dataset
-df = pd.read_csv('translated_file.csv')
-
-# Extract relevant columns for analysis
-columns_of_interest = [
-    '공사규모', '발생형태', '기인물(대)', '기인물(중)', '기인물(소)',
-    '소업종명', '규모', '직종', '연령', '성별', '근속기간', '재해요일',
-    '재해시간', '재해개요', '시설물(대)', '근로자수'
-]
-df_filtered = df[columns_of_interest]
-df_filtered.dropna(subset=['공사규모', '발생형태', '기인물(대)', '소업종명'], inplace=True)
+df = pd.read_csv('Network analysis dataset.csv')
 
 # Create a graph
 G = nx.Graph()
 
 # Add nodes and edges to the graph
-for _, row in df_filtered.iterrows():
-    project_scale = row['공사규모']
-    accident_type = row['발생형태']
-    major_cause = row['기인물(대)']
-    medium_cause = row['기인물(중)']
-    minor_cause = row['기인물(소)']
-    industry_type = row['소업종명']
-    occupation_type = row['직종']
-    age = row['연령']
-    gender = row['성별']
-    experience = row['근속기간']
-    weekday = row['재해요일']
-    time = row['재해시간']
-    facility = row['시설물(대)']
-    worker_count = row['근로자수']
+for _, row in df.iterrows():
+    day = row['Day']
+    age = row['Age']
+    original_cause_material = row['Original Cause Material']
+    injury_type = row['Injury Type']
+    accident_time = row['Accident Time']
+    accident_month = row['Accident Month']
+    company_size = row['Company Size']
+    project_scale = row['Project Scale']
+    years_of_service = row['Years of Service']
+    progress_rate = row['Progress Rate']
+    worker_status = row['Worker Status']
+    gender = row['Gender']
+    pet_range = row['PET range']
+    pm10_group = row['PM10_group']
 
-    G.add_node(project_scale, type='ProjectScale')
-    G.add_node(accident_type, type='AccidentType')
-    G.add_node(major_cause, type='MajorCause')
-    G.add_node(medium_cause, type='MediumCause')
-    G.add_node(minor_cause, type='MinorCause')
-    G.add_node(industry_type, type='IndustryType')
-    G.add_node(occupation_type, type='OccupationType')
+    # Add nodes with attributes
+    G.add_node(day, type='Day')
     G.add_node(age, type='Age')
+    G.add_node(original_cause_material, type='Original Cause Material')
+    G.add_node(injury_type, type='Injury Type')
+    G.add_node(accident_time, type='Accident Time')
+    G.add_node(accident_month, type='Accident Month')
+    G.add_node(company_size, type='Company Size')
+    G.add_node(project_scale, type='Project Scale')
+    G.add_node(years_of_service, type='Years of Service')
+    G.add_node(progress_rate, type='Progress Rate')
+    G.add_node(worker_status, type='Worker Status')
     G.add_node(gender, type='Gender')
-    G.add_node(experience, type='Experience')
-    G.add_node(weekday, type='Weekday')
-    G.add_node(time, type='Time')
-    G.add_node(facility, type='Facility')
-    G.add_node(worker_count, type='WorkerCount')
+    G.add_node(pet_range, type='PET range')
+    G.add_node(pm10_group, type='PM10 group')
 
-    G.add_edge(project_scale, accident_type)
-    G.add_edge(accident_type, major_cause)
-    G.add_edge(major_cause, medium_cause)
-    G.add_edge(medium_cause, minor_cause)
-    G.add_edge(minor_cause, industry_type)
-    G.add_edge(industry_type, occupation_type)
-    G.add_edge(occupation_type, age)
-    G.add_edge(age, gender)
-    G.add_edge(gender, experience)
-    G.add_edge(experience, weekday)
-    G.add_edge(weekday, time)
-    G.add_edge(time, facility)
-    G.add_edge(facility, worker_count)
+    # Add edges between nodes
+    G.add_edge(day, accident_time)
+    G.add_edge(day, accident_month)
+    G.add_edge(age, years_of_service)
+    G.add_edge(age, injury_type)
+    G.add_edge(age, project_scale)  
+    G.add_edge(age, progress_rate)
+    G.add_edge(original_cause_material, injury_type)
+    G.add_edge(original_cause_material, accident_time)  
+    G.add_edge(original_cause_material, project_scale) 
+    G.add_edge(accident_time, project_scale)
+    G.add_edge(accident_time, worker_status)  
+    G.add_edge(accident_time, gender) 
+    G.add_edge(accident_month, project_scale)
+    G.add_edge(accident_month, company_size)
+    G.add_edge(company_size, progress_rate)
+    G.add_edge(company_size, worker_status)
+    G.add_edge(company_size, gender)  
+    G.add_edge(project_scale, worker_status)
+    G.add_edge(years_of_service, progress_rate)
+    G.add_edge(years_of_service, worker_status)
+    G.add_edge(gender, worker_status)
+    G.add_edge(gender, pet_range)
+    G.add_edge(pet_range, pm10_group)
+    G.add_edge(pet_range, original_cause_material)
+    G.add_edge(pet_range, injury_type)
+    G.add_edge(pm10_group, company_size)
+    G.add_edge(pm10_group, project_scale)
 
 # Streamlit interface
 st.title("Construction Safety Factors and Accident Risks Analysis")
@@ -74,20 +81,20 @@ node_selection = st.sidebar.selectbox("Select a node to simulate removal:", opti
 
 # Define color map for different types
 color_map = {
-    'ProjectScale': '#66c2a5',
-    'AccidentType': '#fc8d62',
-    'MajorCause': '#8da0cb',
-    'MediumCause': '#e78ac3',
-    'MinorCause': '#a6d854',
-    'IndustryType': '#ffd92f',
-    'OccupationType': '#e5c494',
-    'Age': '#b3b3b3',
-    'Gender': '#1f78b4',
-    'Experience': '#33a02c',
-    'Weekday': '#6a3d9a',
-    'Time': '#b15928',
-    'Facility': '#ff7f00',
-    'WorkerCount': '#cab2d6'
+    'Day': '#66c2a5',
+    'Age': '#fc8d62',
+    'Original Cause Material': '#8da0cb',
+    'Injury Type': '#e78ac3',
+    'Accident Time': '#a6d854',
+    'Accident Month': '#ffd92f',
+    'Company Size': '#e5c494',
+    'Project Scale': '#b3b3b3',
+    'Years of Service': '#1f78b4',
+    'Progress Rate': '#33a02c',
+    'Worker Status': '#6a3d9a',
+    'Gender': '#b15928',
+    'PET range': '#ff7f00',
+    'PM10 group': '#cab2d6'
 }
 
 # Centrality measures
