@@ -46,32 +46,60 @@ for _, row in df.iterrows():
 
     # Add edges between nodes
     G.add_edge(day, accident_time)
-    G.add_edge(day, accident_month)
+    G.add_edge(day, progress_rate)
+    G.add_edge(day, pet_range)
+    
     G.add_edge(age, years_of_service)
-    G.add_edge(age, injury_type)
-    G.add_edge(age, project_scale)  
-    G.add_edge(age, progress_rate)
+    G.add_edge(age, worker_status)
+    G.add_edge(age, gender)
+    
     G.add_edge(original_cause_material, injury_type)
-    G.add_edge(original_cause_material, accident_time)  
-    G.add_edge(original_cause_material, project_scale) 
-    G.add_edge(accident_time, project_scale)
-    G.add_edge(accident_time, worker_status)  
-    G.add_edge(accident_time, gender) 
-    G.add_edge(accident_month, project_scale)
-    G.add_edge(accident_month, company_size)
-    G.add_edge(company_size, progress_rate)
+    G.add_edge(original_cause_material, accident_time)
+    G.add_edge(original_cause_material, project_scale)
+    
+    G.add_edge(injury_type, accident_time)
+    G.add_edge(injury_type, accident_month)
+    G.add_edge(injury_type, worker_status)
+    
+    G.add_edge(accident_time, day)
+    G.add_edge(accident_time, accident_month)
+    G.add_edge(accident_time, pet_range)
+    G.add_edge(accident_time, pm10_group)
+    
+    G.add_edge(accident_month, pet_range)
+    G.add_edge(accident_month, pm10_group)
+    
+    G.add_edge(company_size, project_scale)
+    G.add_edge(company_size, years_of_service)
     G.add_edge(company_size, worker_status)
-    G.add_edge(company_size, gender)  
-    G.add_edge(project_scale, worker_status)
-    G.add_edge(years_of_service, progress_rate)
+    
+    G.add_edge(project_scale, original_cause_material)
+    G.add_edge(project_scale, accident_time)
+    G.add_edge(project_scale, accident_month)
+    
+    G.add_edge(years_of_service, age)
     G.add_edge(years_of_service, worker_status)
+    G.add_edge(years_of_service, gender)
+    
+    G.add_edge(progress_rate, accident_time)
+    G.add_edge(progress_rate, accident_month)
+    G.add_edge(progress_rate, worker_status)
+    
+    G.add_edge(worker_status, age)
+    G.add_edge(worker_status, years_of_service)
+    G.add_edge(worker_status, gender)
+    
+    G.add_edge(gender, age)
     G.add_edge(gender, worker_status)
     G.add_edge(gender, pet_range)
+    
+    G.add_edge(pet_range, accident_time)
+    G.add_edge(pet_range, accident_month)
     G.add_edge(pet_range, pm10_group)
-    G.add_edge(pet_range, original_cause_material)
-    G.add_edge(pet_range, injury_type)
-    G.add_edge(pm10_group, company_size)
-    G.add_edge(pm10_group, project_scale)
+    
+    G.add_edge(pm10_group, accident_time)
+    G.add_edge(pm10_group, accident_month)
+    G.add_edge(pm10_group, pet_range)
 
 # Streamlit interface
 st.title("Construction Safety Factors and Accident Risks Analysis")
